@@ -4,6 +4,7 @@ project(GCP_Assignment_1)
 
 if(MSVC)
   include_directories(
+	contrib/msvc-windows-x86
     contrib/msvc-windows-x86/SDL2/include
   )
 
