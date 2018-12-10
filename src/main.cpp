@@ -2,10 +2,16 @@
 #include <glm/glm.hpp>
 
 #include <iostream>
+#include <limits>
 
+#include "Object.h"
+#include "Camera.h"
 #include "Ray.h"
+#include "Sphere.h"
+#include "Tracer.h"
 
-glm::vec3 color(const Ray& r);
+glm::vec3 color(const Ray& r, std::vector<std::shared_ptr<Object>> objects);
+bool Intersections(const Ray& r, float t_min, float t_max, ObjectIntersections& inter, std::vector<std::shared_ptr<Object>> objects);
 
 // Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -22,6 +28,8 @@ int main(int argc, char* args[])
 	SDL_Renderer* renderer = NULL;
 
 	SDL_Texture* texture = NULL;
+
+	std::vector<std::shared_ptr<Object>> objects;
 
 	// Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -54,15 +62,19 @@ int main(int argc, char* args[])
 				glm::vec3 height(0.0f, 2.0f, 0.0f);
 				glm::vec3 origin(0.0f, 0.0f, 0.0f);
 
+				objects.push_back(std::make_shared<Sphere>(glm::vec3(0.0f, 0.0f, -1.0f), 0.5f));
+				objects.push_back(std::make_shared<Sphere>(glm::vec3(0.0f, -100.5f, -1.0f), 100.0f));
+
 				for (int y = SCREEN_HEIGHT - 1; y >= 0; y--)
 				{
 					for (int x = 0; x < SCREEN_WIDTH; x++)
 					{
-						//glm::vec3 col(float(x) / float(SCREEN_WIDTH), float(y) / float(SCREEN_HEIGHT), 0.2f);
 						float h = float(x) / float(SCREEN_WIDTH);
 						float v = float(y) / float(SCREEN_HEIGHT);
 						Ray r(origin, startPoint + h * width + v * height);
-						glm::vec3 col = color(r);
+						
+						glm::vec3 p = r.p(2.0f);
+						glm::vec3 col = color(r, objects);
 
 						int red = int(255.99 * col.r);
 						int green = int(255.99 * col.g);
@@ -90,24 +102,63 @@ int main(int argc, char* args[])
 	return 0;
 }
 
-bool sphere(const glm::vec3& center, float radius, const Ray& r)
+float sphereIntersections(const glm::vec3& center, float radius, const Ray& r)
 {
 	glm::vec3 oc = r.origin() - center;
 	float a = dot(r.direction(), r.direction());
 	float b = 2.0f * dot(oc, r.direction());
 	float c = dot(oc, oc) - radius * radius;
 	float discriminant = b * b - 4 * a * c;
-	return (discriminant > 0);
+	if (discriminant < 0)
+	{
+		return -1.0f;
+	}
+	else
+	{
+		return (-b - sqrt(discriminant)) / (2.0f * a);
+	}
 }
 
-glm::vec3 color(const Ray& r)
+glm::vec3 color(const Ray& r, std::vector<std::shared_ptr<Object>> objects)
 {
-	if (sphere(glm::vec3(0, 0, -1), 0.5f, r))
+	ObjectIntersections inter;
+	if (Intersections(r, 0.0f, std::numeric_limits<float>::max(), inter, objects))
 	{
-		return glm::vec3(1, 0, 0);
+		return 0.5f * glm::vec3(inter.normal.x + 1, inter.normal.y + 1, inter.normal.z + 1);
+	}
+	else
+	{
+		glm::vec3 unitDirection = glm::normalize(r.direction());
+		float t = 0.5f * (unitDirection.y + 1.0f);
+		return (1.0f - t) * glm::vec3(1.0f, 1.0f, 1.0f) + t * glm::vec3(0.5f, 0.7f, 1.0f);
+	}
+	
+	//float t = sphereIntersections(glm::vec3(0.0f, 0.0f, -1.0f), 0.5f, r);
+	//if (t > 0.0f)
+	//{
+	//	glm::vec3 N = glm::normalize(r.p(t) - glm::vec3(0.0f, 0.0f, -1.0f));
+	//	return 0.5f * glm::vec3(N.x + 1.0f, N.y + 1.0f, N.z + 1.0f);
+	//}
+
+	//glm::vec3 unitDirection = glm::normalize(r.direction());
+	//t = 0.5f * (unitDirection.y + 1.0f);
+	//return (1.0f - t) * glm::vec3(1.0f, 1.0f, 1.0f) + t * glm::vec3(0.5f, 0.7f, 1.0f);
+}
+
+bool Intersections(const Ray& r, float t_min, float t_max, ObjectIntersections& inter, std::vector<std::shared_ptr<Object>> objects)
+{
+	ObjectIntersections rootInter;
+	bool AnyIntersections = false;
+	float Nearest = t_max;
+	for (int i = 0; i < objects.size(); i++)
+	{
+		if (objects.at(i)->Intersections(r, t_min, Nearest, rootInter))
+		{
+			AnyIntersections = true;
+			Nearest = rootInter.t;
+			inter = rootInter;
+		}
 	}
 
-	glm::vec3 unitDirection = glm::normalize(r.direction());
-	float t = 0.5f * (unitDirection.y + 1.0f);
-	return (1.0f - t) * glm::vec3(1.0f, 1.0f, 1.0f) + t * glm::vec3(0.5f, 0.7f, 1.0f);
+	return AnyIntersections;
 }
