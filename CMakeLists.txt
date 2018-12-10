@@ -29,6 +29,8 @@ add_executable(raytracer
   src/Tracer.h
   src/Sphere.cpp
   src/Sphere.h
+  src/Renderer.cpp
+  src/Renderer.h
 )
 
 if(MSVC)

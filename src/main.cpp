@@ -7,6 +7,7 @@
 #include "Object.h"
 #include "Camera.h"
 #include "Ray.h"
+#include "Renderer.h"
 #include "Sphere.h"
 #include "Tracer.h"
 
@@ -86,12 +87,12 @@ int main(int argc, char* args[])
 				}
 
 				SDL_RenderPresent(renderer);
-
-				SDL_Delay(10000000);
 			}
 		}
 	}
 
+
+	SDL_Delay(10000000);
 	// Destroy Renderer
 	SDL_DestroyRenderer(renderer);
 	// Destroy window
