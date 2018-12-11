@@ -21,7 +21,7 @@ private:
 
 public:
 
-	void CreateRenderer(SDL_Window* window, const int SCREEN_WIDTH, const int SCREEN_HEIGHT, const Ray& r, std::vector<std::shared_ptr<Object>> objects);
+	Renderer(std::shared_ptr<Window> window, const int _width, const int _height, const Ray& r, std::vector<std::shared_ptr<Object>> objects);
 
 	std::shared_ptr<Tracer> get_tracer();
 	void set_tracer(std::shared_ptr<Tracer> _tracer);

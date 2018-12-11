@@ -1,9 +1,9 @@
 #include "Renderer.h"
 
-void Renderer::CreateRenderer(SDL_Window* window, const int SCREEN_WIDTH, const int SCREEN_HEIGHT, const Ray& r, std::vector<std::shared_ptr<Object>> objects)
+Renderer::Renderer(std::shared_ptr<Window> window, const int _width, const int _height, const Ray& r, std::vector<std::shared_ptr<Object>> objects)
 {
 	// Create renderer
-	renderer = SDL_CreateRenderer(window, -1, 0/*SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC*/);
+	renderer = SDL_CreateRenderer(window->get_window(), -1, 0);
 	if (renderer == NULL)
 	{
 		std::cout << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
@@ -21,23 +21,23 @@ void Renderer::CreateRenderer(SDL_Window* window, const int SCREEN_WIDTH, const 
 		objects.push_back(std::make_shared<Sphere>(glm::vec3(0.0f, 0.0f, -1.0f), 0.5f));
 		objects.push_back(std::make_shared<Sphere>(glm::vec3(0.0f, -100.5f, -1.0f), 100.0f));
 
-		for (int y = SCREEN_HEIGHT - 1; y >= 0; y--)
+		for (int y = _height - 1; y >= 0; y--)
 		{
-			for (int x = 0; x < SCREEN_WIDTH; x++)
+			for (int x = 0; x < _width; x++)
 			{
-				float h = float(x) / float(SCREEN_WIDTH);
-				float v = float(y) / float(SCREEN_HEIGHT);
+				float h = float(x) / float(_width);
+				float v = float(y) / float(_height);
 				Ray r(origin, startPoint + h * width + v * height);
 
 				glm::vec3 p = r.p(2.0f);
-				glm::vec3 col = color(r/*, objects*/);
+				glm::vec3 col = color(r);
 
 				int red = int(255.99 * col.r);
 				int green = int(255.99 * col.g);
 				int blue = int(255.99 * col.b);
 
 				SDL_SetRenderDrawColor(renderer, red, green, blue, 255);
-				SDL_RenderDrawPoint(renderer, x, SCREEN_HEIGHT - y);
+				SDL_RenderDrawPoint(renderer, x, _height - y);
 			}
 		}
 

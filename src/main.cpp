@@ -10,6 +10,7 @@
 #include "Renderer.h"
 #include "Sphere.h"
 #include "Tracer.h"
+#include "Window.h"
 
 glm::vec3 color(const Ray& r, std::vector<std::shared_ptr<Object>> objects);
 bool Intersections(const Ray& r, float t_min, float t_max, ObjectIntersections& inter, std::vector<std::shared_ptr<Object>> objects);
@@ -21,14 +22,15 @@ const int SCREEN_HEIGHT = 320;
 int main(int argc, char* args[])
 {
 	// The window we'll be rendering to
-	SDL_Window* window = NULL;
+	std::shared_ptr<Window> window = NULL;
+
+	std::shared_ptr<Renderer> renderer = NULL;
+
 
 	// The surface contained by the window
 	SDL_Surface* screenSurface = NULL;
-
-	SDL_Renderer* renderer = NULL;
-
 	SDL_Texture* texture = NULL;
+
 
 	std::vector<std::shared_ptr<Object>> objects;
 
@@ -39,56 +41,10 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-		// Create window
-		window = SDL_CreateWindow("RayTracer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-		if (window == NULL)
-		{
-			std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
-		}
-		else
-		{
-			// Create renderer
-			renderer = SDL_CreateRenderer(window, -1, 0/*SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC*/);
-			if (renderer == NULL)
-			{
-				std::cout << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
-			}
-			else
-			{
-				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-				SDL_RenderClear(renderer);
+		window = std::make_shared<Window>();
 
-				glm::vec3 startPoint(-2.0f, -1.0f, -1.0f);
-				glm::vec3 width(4.0f, 0.0f, 0.0f);
-				glm::vec3 height(0.0f, 2.0f, 0.0f);
-				glm::vec3 origin(0.0f, 0.0f, 0.0f);
+		renderer = std::make_shared<Renderer>();
 
-				objects.push_back(std::make_shared<Sphere>(glm::vec3(0.0f, 0.0f, -1.0f), 0.5f));
-				objects.push_back(std::make_shared<Sphere>(glm::vec3(0.0f, -100.5f, -1.0f), 100.0f));
-
-				for (int y = SCREEN_HEIGHT - 1; y >= 0; y--)
-				{
-					for (int x = 0; x < SCREEN_WIDTH; x++)
-					{
-						float h = float(x) / float(SCREEN_WIDTH);
-						float v = float(y) / float(SCREEN_HEIGHT);
-						Ray r(origin, startPoint + h * width + v * height);
-						
-						glm::vec3 p = r.p(2.0f);
-						glm::vec3 col = color(r, objects);
-
-						int red = int(255.99 * col.r);
-						int green = int(255.99 * col.g);
-						int blue = int(255.99 * col.b);
-
-						SDL_SetRenderDrawColor(renderer, red, green, blue, 255);
-						SDL_RenderDrawPoint(renderer, x, SCREEN_HEIGHT - y);
-					}
-				}
-
-				SDL_RenderPresent(renderer);
-			}
-		}
 	}
 
 
@@ -144,7 +100,7 @@ bool Intersections(const Ray& r, float t_min, float t_max, ObjectIntersections& 
 	float Nearest = t_max;
 	for (int i = 0; i < objects.size(); i++)
 	{
-		if (objects.at(i)->Intersections(r, t_min, Nearest, rootInter, objects))
+		if (objects.at(i)->Intersections(r, t_min, Nearest, rootInter))
 		{
 			AnyIntersections = true;
 			Nearest = rootInter.t;

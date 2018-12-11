@@ -18,7 +18,10 @@ private:
 
 public:
 
-	void CreateWindow();
+	Window();
+
+	SDL_Window* get_window();
+	//void set_window(SDL_Window* _window);
 
 };
 #endif
