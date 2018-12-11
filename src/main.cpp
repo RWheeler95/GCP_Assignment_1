@@ -103,22 +103,23 @@ int main(int argc, char* args[])
 	return 0;
 }
 
-float sphereIntersections(const glm::vec3& center, float radius, const Ray& r)
-{
-	glm::vec3 oc = r.origin() - center;
-	float a = dot(r.direction(), r.direction());
-	float b = 2.0f * dot(oc, r.direction());
-	float c = dot(oc, oc) - radius * radius;
-	float discriminant = b * b - 4 * a * c;
-	if (discriminant < 0)
-	{
-		return -1.0f;
-	}
-	else
-	{
-		return (-b - sqrt(discriminant)) / (2.0f * a);
-	}
-}
+//float sphereIntersections(const glm::vec3& center, float radius, const Ray& r)
+//{
+//	glm::vec3 oc = r.origin() - center;
+//	float a = dot(r.direction(), r.direction());
+//	float b = 2.0f * dot(oc, r.direction());
+//	float c = dot(oc, oc) - radius * radius;
+//	float discriminant = b * b - 4 * a * c;
+//	if (discriminant < 0)
+//	{
+//		return -1.0f;
+//	}
+//	else
+//	{
+//		return (-b - sqrt(discriminant)) / (2.0f * a);
+//	}
+//}
+
 
 glm::vec3 color(const Ray& r, std::vector<std::shared_ptr<Object>> objects)
 {
@@ -132,20 +133,10 @@ glm::vec3 color(const Ray& r, std::vector<std::shared_ptr<Object>> objects)
 		glm::vec3 unitDirection = glm::normalize(r.direction());
 		float t = 0.5f * (unitDirection.y + 1.0f);
 		return (1.0f - t) * glm::vec3(1.0f, 1.0f, 1.0f) + t * glm::vec3(0.5f, 0.7f, 1.0f);
-	}
-	
-	//float t = sphereIntersections(glm::vec3(0.0f, 0.0f, -1.0f), 0.5f, r);
-	//if (t > 0.0f)
-	//{
-	//	glm::vec3 N = glm::normalize(r.p(t) - glm::vec3(0.0f, 0.0f, -1.0f));
-	//	return 0.5f * glm::vec3(N.x + 1.0f, N.y + 1.0f, N.z + 1.0f);
-	//}
-
-	//glm::vec3 unitDirection = glm::normalize(r.direction());
-	//t = 0.5f * (unitDirection.y + 1.0f);
-	//return (1.0f - t) * glm::vec3(1.0f, 1.0f, 1.0f) + t * glm::vec3(0.5f, 0.7f, 1.0f);
+	}	
 }
 
+// Object
 bool Intersections(const Ray& r, float t_min, float t_max, ObjectIntersections& inter, std::vector<std::shared_ptr<Object>> objects)
 {
 	ObjectIntersections rootInter;
@@ -153,7 +144,7 @@ bool Intersections(const Ray& r, float t_min, float t_max, ObjectIntersections& 
 	float Nearest = t_max;
 	for (int i = 0; i < objects.size(); i++)
 	{
-		if (objects.at(i)->Intersections(r, t_min, Nearest, rootInter))
+		if (objects.at(i)->Intersections(r, t_min, Nearest, rootInter, objects))
 		{
 			AnyIntersections = true;
 			Nearest = rootInter.t;

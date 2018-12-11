@@ -1,6 +1,9 @@
 #ifndef _OBJECT_H_
 #define _OBJECT_H_
 
+#include <vector>
+#include <memory>
+
 #include "Ray.h"
 
 struct ObjectIntersections

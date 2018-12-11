@@ -6,7 +6,7 @@
 
 #include "Object.h"
 
-class Tracer : public Object
+class Tracer
 {
 private:
 
