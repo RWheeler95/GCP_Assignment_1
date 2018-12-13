@@ -1,3 +1,9 @@
+/*
+https://medium.com/@phostershop/solving-multithreaded-raytracing-issues-with-c-11-7f018ecd76fa
+https://docs.microsoft.com/en-gb/windows/desktop/ProcThread/creating-threads
+http://www.realtimerendering.com/raytracing/Ray%20Tracing%20in%20a%20Weekend.pdf
+*/
+
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
 
@@ -12,8 +18,8 @@
 #include "Tracer.h"
 #include "Window.h"
 
-glm::vec3 color(const Ray& r, std::vector<std::shared_ptr<Object>> objects);
-bool Intersections(const Ray& r, float t_min, float t_max, ObjectIntersections& inter, std::vector<std::shared_ptr<Object>> objects);
+//glm::vec3 color(const Ray& r, std::vector<std::shared_ptr<Object>> objects);
+//bool Intersections(const Ray& r, float t_min, float t_max, ObjectIntersections& inter, std::vector<std::shared_ptr<Object>> objects);
 
 // Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -21,18 +27,20 @@ const int SCREEN_HEIGHT = 320;
 
 int main(int argc, char* args[])
 {
-	// The window we'll be rendering to
+	// The window I'll be rendering to
 	std::shared_ptr<Window> window = NULL;
 
 	std::shared_ptr<Renderer> renderer = NULL;
 
 
 	// The surface contained by the window
-	SDL_Surface* screenSurface = NULL;
-	SDL_Texture* texture = NULL;
-
+	//SDL_Surface* screenSurface = NULL;
+	//SDL_Texture* texture = NULL;
 
 	std::vector<std::shared_ptr<Object>> objects;
+
+	objects.push_back(std::make_shared<Sphere>(glm::vec3(0.0f, 0.0f, -1.0f), 0.5f));
+	objects.push_back(std::make_shared<Sphere>(glm::vec3(0.0f, -100.5f, -1.0f), 100.0f));
 
 	// Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -43,16 +51,25 @@ int main(int argc, char* args[])
 	{
 		window = std::make_shared<Window>();
 
-		renderer = std::make_shared<Renderer>();
-
+		renderer = std::make_shared<Renderer>(window, SCREEN_WIDTH, SCREEN_HEIGHT, objects);
 	}
 
+	bool quit{ };
+	SDL_Event event;
 
-	SDL_Delay(10000000);
-	// Destroy Renderer
-	SDL_DestroyRenderer(renderer);
-	// Destroy window
-	SDL_DestroyWindow(window);
+	while (!quit)
+	{
+		SDL_WaitEvent(&event);
+
+		switch (event.type)
+		{
+		case SDL_QUIT:
+
+			quit = true;
+			break;
+		}
+	}
+
 	// Quit SDL subsystems
 	SDL_Quit();
 
@@ -77,36 +94,36 @@ int main(int argc, char* args[])
 //}
 
 
-glm::vec3 color(const Ray& r, std::vector<std::shared_ptr<Object>> objects)
-{
-	ObjectIntersections inter;
-	if (Intersections(r, 0.0f, std::numeric_limits<float>::max(), inter, objects))
-	{
-		return 0.5f * glm::vec3(inter.normal.x + 1, inter.normal.y + 1, inter.normal.z + 1);
-	}
-	else
-	{
-		glm::vec3 unitDirection = glm::normalize(r.direction());
-		float t = 0.5f * (unitDirection.y + 1.0f);
-		return (1.0f - t) * glm::vec3(1.0f, 1.0f, 1.0f) + t * glm::vec3(0.5f, 0.7f, 1.0f);
-	}	
-}
-
-// Object
-bool Intersections(const Ray& r, float t_min, float t_max, ObjectIntersections& inter, std::vector<std::shared_ptr<Object>> objects)
-{
-	ObjectIntersections rootInter;
-	bool AnyIntersections = false;
-	float Nearest = t_max;
-	for (int i = 0; i < objects.size(); i++)
-	{
-		if (objects.at(i)->Intersections(r, t_min, Nearest, rootInter))
-		{
-			AnyIntersections = true;
-			Nearest = rootInter.t;
-			inter = rootInter;
-		}
-	}
-
-	return AnyIntersections;
-}
+//glm::vec3 color(const Ray& r, std::vector<std::shared_ptr<Object>> objects)
+//{
+//	ObjectIntersections inter;
+//	if (Intersections(r, 0.0f, std::numeric_limits<float>::max(), inter, objects))
+//	{
+//		return 0.5f * glm::vec3(inter.normal.x + 1, inter.normal.y + 1, inter.normal.z + 1);
+//	}
+//	else
+//	{
+//		glm::vec3 unitDirection = glm::normalize(r.direction());
+//		float t = 0.5f * (unitDirection.y + 1.0f);
+//		return (1.0f - t) * glm::vec3(1.0f, 1.0f, 1.0f) + t * glm::vec3(0.5f, 0.7f, 1.0f);
+//	}	
+//}
+//
+//// Object
+//bool Intersections(const Ray& r, float t_min, float t_max, ObjectIntersections& inter, std::vector<std::shared_ptr<Object>> objects)
+//{
+//	ObjectIntersections rootInter;
+//	bool AnyIntersections = false;
+//	float Nearest = t_max;
+//	for (int i = 0; i < objects.size(); i++)
+//	{
+//		if (objects.at(i)->Intersections(r, t_min, Nearest, rootInter))
+//		{
+//			AnyIntersections = true;
+//			Nearest = rootInter.t;
+//			inter = rootInter;
+//		}
+//	}
+//
+//	return AnyIntersections;
+//}

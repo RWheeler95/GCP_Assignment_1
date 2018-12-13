@@ -18,10 +18,12 @@ private:
 
 	SDL_Renderer* renderer = NULL;
 	std::shared_ptr<Tracer> tracer;
+	std::vector<std::shared_ptr<Object>> objects;
 
 public:
 
-	Renderer(std::shared_ptr<Window> window, const int _width, const int _height, const Ray& r, std::vector<std::shared_ptr<Object>> objects);
+	Renderer(std::shared_ptr<Window> window, const int _width, const int _height, std::vector<std::shared_ptr<Object>> objects);
+	~Renderer();
 
 	std::shared_ptr<Tracer> get_tracer();
 	void set_tracer(std::shared_ptr<Tracer> _tracer);

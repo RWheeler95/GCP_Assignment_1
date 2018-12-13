@@ -1,7 +1,9 @@
 #include "Renderer.h"
 
-Renderer::Renderer(std::shared_ptr<Window> window, const int _width, const int _height, const Ray& r, std::vector<std::shared_ptr<Object>> objects)
+Renderer::Renderer(std::shared_ptr<Window> window, const int _width, const int _height, std::vector<std::shared_ptr<Object>> obj)
 {
+	objects = obj;
+
 	// Create renderer
 	renderer = SDL_CreateRenderer(window->get_window(), -1, 0);
 	if (renderer == NULL)
@@ -17,9 +19,6 @@ Renderer::Renderer(std::shared_ptr<Window> window, const int _width, const int _
 		glm::vec3 width(4.0f, 0.0f, 0.0f);
 		glm::vec3 height(0.0f, 2.0f, 0.0f);
 		glm::vec3 origin(0.0f, 0.0f, 0.0f);
-
-		objects.push_back(std::make_shared<Sphere>(glm::vec3(0.0f, 0.0f, -1.0f), 0.5f));
-		objects.push_back(std::make_shared<Sphere>(glm::vec3(0.0f, -100.5f, -1.0f), 100.0f));
 
 		for (int y = _height - 1; y >= 0; y--)
 		{
@@ -45,6 +44,11 @@ Renderer::Renderer(std::shared_ptr<Window> window, const int _width, const int _
 	}
 }
 
+Renderer::~Renderer()
+{
+	SDL_DestroyRenderer(renderer);  // Destroy Renderer
+}
+
 std::shared_ptr<Tracer> Renderer::get_tracer()
 {
 	return tracer;
@@ -58,7 +62,7 @@ void Renderer::set_tracer(std::shared_ptr<Tracer> _tracer)
 glm::vec3 Renderer::color(const Ray & r)
 {
 	ObjectIntersections inter;
-	if (tracer->Intersections(r, 0.0f, std::numeric_limits<float>::max(), inter))
+	if (tracer->Intersections(r, 0.0f, std::numeric_limits<float>::max(), inter, objects))
 	{
 		return 0.5f * glm::vec3(inter.normal.x + 1, inter.normal.y + 1, inter.normal.z + 1);
 	}

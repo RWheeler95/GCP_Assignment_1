@@ -10,8 +10,12 @@ Window::Window()
 	}
 }
 
+Window::~Window()
+{
+	SDL_DestroyWindow(window);  // Destroy window
+}
+
 SDL_Window * Window::get_window()
 {
 	return window;
 }
-

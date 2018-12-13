@@ -19,6 +19,7 @@ private:
 public:
 
 	Window();
+	~Window();
 
 	SDL_Window* get_window();
 	//void set_window(SDL_Window* _window);

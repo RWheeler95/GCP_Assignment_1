@@ -10,12 +10,10 @@ class Tracer
 {
 private:
 
-	std::vector<std::shared_ptr<Object>> objects;
-
 public:
 
 	Tracer() { }
-	bool Intersections(const Ray& r, float t_min, float t_max, ObjectIntersections& inter) const;
+	bool Intersections(const Ray& r, float t_min, float t_max, ObjectIntersections& inter, std::vector<std::shared_ptr<Object>> obj) const;
 
 };
 #endif
