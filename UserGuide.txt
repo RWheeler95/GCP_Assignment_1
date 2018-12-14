@@ -1,0 +1,49 @@
+******************************************
+		USER GUIDE
+******************************************
+
+Running CMake:
+https://cmake.org/runningcmake/
+
+- Once you have created the build folder 
+go into it and open the the (.sln) file.
+
+- When the program has successfully
+loaded you will be able to run the
+program using the 'Local Windows
+Debugger'.
+
+References:
+
+Realtimerendering.com. (2018). 
+[online] Available at: 
+http://www.realtimerendering.com/raytracing/Ray%20Tracing%20in%20a%20Weekend.pdf 
+[Accessed 14 Dec. 2018].
+
+Scratchapixel.com. (2018). 
+Scratchapixel. [online] 
+Available at: https://www.scratchapixel.com/ 
+[Accessed 14 Dec. 2018].
+
+Brightspace.bournemouth.ac.uk. (2018). 
+[online] Available at: 
+https://brightspace.bournemouth.ac.uk/d2l/le/content/30715/Home 
+[Accessed 14 Dec. 2018].
+
+www.tutorialspoint.com. (2018). 
+C++ Multithreading. [online] 
+Available at: https://www.tutorialspoint.com/cplusplus/cpp_multithreading.htm 
+[Accessed 14 Dec. 2018].
+
+Techopedia.com. (2018). 
+What is Multithreading? - 
+Definition from Techopedia. 
+[online] Available at: 
+https://www.techopedia.com/definition/24297/multithreading-computer-architecture 
+[Accessed 14 Dec. 2018].
+
+Cplusplus.com. (2018). 
+thread - C++ Reference. 
+[online] Available at: 
+http://www.cplusplus.com/reference/thread/thread/ 
+[Accessed 14 Dec. 2018].

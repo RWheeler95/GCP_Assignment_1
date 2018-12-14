@@ -10,7 +10,6 @@ https://www.tutorialspoint.com/cplusplus/cpp_multithreading.htm
 #include <glm/glm.hpp>
 
 #include <iostream>
-//#include <limits>
 
 #include "Object.h"
 #include "Camera.h"
