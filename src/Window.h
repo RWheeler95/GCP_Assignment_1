@@ -5,13 +5,13 @@
 
 #include <iostream>
 
+// Screen dimension constants
+#define SCREEN_WIDTH 640;
+#define SCREEN_HEIGHT 320;
+
 class Window
 {
 private:
-
-	// Screen dimension constants
-	const int SCREEN_WIDTH = 640;
-	const int SCREEN_HEIGHT = 320;
 
 	// The window we'll be rendering to
 	SDL_Window* window = NULL;
@@ -22,7 +22,8 @@ public:
 	~Window();
 
 	SDL_Window* get_window();
-	//void set_window(SDL_Window* _window);
+	const int get_width();
+	const int get_height();
 
 };
 #endif

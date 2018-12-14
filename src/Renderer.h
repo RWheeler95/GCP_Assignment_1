@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <vector>
+#include <thread>
 
 #include "Window.h"
 #include "Tracer.h"
@@ -19,6 +20,7 @@ private:
 	SDL_Renderer* renderer = NULL;
 	std::shared_ptr<Tracer> tracer;
 	std::vector<std::shared_ptr<Object>> objects;
+	glm::vec3 pixels[640][320];
 
 public:
 
@@ -27,8 +29,18 @@ public:
 
 	std::shared_ptr<Tracer> get_tracer();
 	void set_tracer(std::shared_ptr<Tracer> _tracer);
+	
+	SDL_Renderer* get_renderer();
 
 	glm::vec3 color(const Ray& r);
 
+	glm::vec3 get_pixel(int i, int j);
+	void set_pixel(glm::vec3 pixel, int i, int j);
+
 };
+
+void Threads(std::shared_ptr<Renderer> renderer, const int _width, const int _height);
+
+void DrawSections(std::shared_ptr<Renderer> renderer, int minX, int minY, int maxX, int maxY, const int _width, const int _height);
+
 #endif
